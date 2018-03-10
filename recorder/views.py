@@ -14,6 +14,22 @@ from django.views.decorators.csrf import csrf_exempt
 def index(request):
     return HttpResponse("Hello, World!!")
 
+def all_roasts_api(request):
+    qs = request.GET
+    result = {}
+    try:
+        result['status'] = 'ok'
+        result['message'] = ''
+        result['roasts'] = []
+        roasts = models.Roast.objects.all().order_by('-id')
+        for roast in roasts:
+            result['roasts'].append(model_to_dict(roast))
+    except Exception, e:
+        result['status'] = 'error'
+        result['message'] = str(e)
+
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
 def roast_api(request):
     qs = request.GET
     result = {}
@@ -22,14 +38,30 @@ def roast_api(request):
         result['message'] = ''
         result['roast_info'] = model_to_dict(models.Roast.objects.get(id=qs['roast_id']))
         result['data_points'] = []
-        dataPoints = models.DataPoint.objects.filter(roast=qs['roast_id'])
-        for dp in dataPoints:
-            dp.timestamp = str(dp.timestamp)
-            result['data_points'].append(model_to_dict(dp))
+        dataPoints = models.DataPoint.objects.filter(roast=qs['roast_id']).order_by('timestamp')
+        if (len(dataPoints) > 0):
+            start_time = dataPoints[0].timestamp
+            for dp in dataPoints:
+                dp.timestamp = int((dp.timestamp - start_time).total_seconds())
+                result['data_points'].append(model_to_dict(dp))
         
     else:
         result['status'] = 'error'
         result['message'] = 'roast_id not specified'
+
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+def delete_roast_api(request):
+    qs = request.GET
+    result = {}
+    try:
+        result['status'] = 'ok'
+        result['message'] = ''
+        models.Roast.objects.get(id=qs['roast_id']).delete()
+        
+    except Exception, e:
+        result['status'] = 'error'
+        result['message'] = str(e)
 
     return HttpResponse(json.dumps(result), content_type='application/json')
 
@@ -39,15 +71,15 @@ def create_roast_api(request):
     result = {}
     try:
         roast = models.Roast(coffee_type=data['coffee_type'],
-                             weight=data['weight'],
+                             weight=float(data['weight']),
                              roast_type=data['roast_type'])
         roast.save()
         result['status'] = 'ok'
         result['message'] = ''
         result['id'] = roast.id
-    except:
+    except Exception, e:
         result['status'] = 'error'
-        result['message'] = 'Error creating roast'
+        result['message'] = str(e)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @csrf_exempt
