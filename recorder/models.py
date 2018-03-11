@@ -6,9 +6,12 @@ import datetime
 
 # Create your models here.
 class Roast(models.Model):
+    timestamp = models.DateTimeField(default=datetime.datetime.now)
     coffee_type = models.CharField(max_length=100)
     weight = models.FloatField()
     roast_type = models.CharField(max_length=100)
+    quality = models.CharField(max_length=100, null=True)
+    notes = models.CharField(max_length=2000, null=True)
 
 class DataPoint(models.Model):
     roast = models.ForeignKey(Roast, on_delete=models.CASCADE)

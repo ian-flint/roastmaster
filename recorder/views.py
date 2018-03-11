@@ -23,6 +23,7 @@ def all_roasts_api(request):
         result['roasts'] = []
         roasts = models.Roast.objects.all().order_by('-id')
         for roast in roasts:
+            roast.timestamp = str(roast.timestamp.date())
             result['roasts'].append(model_to_dict(roast))
     except Exception, e:
         result['status'] = 'error'
@@ -37,6 +38,7 @@ def roast_api(request):
         result['status'] = 'ok'
         result['message'] = ''
         result['roast_info'] = model_to_dict(models.Roast.objects.get(id=qs['roast_id']))
+        result['roast_info']['timestamp'] = str(result['roast_info']['timestamp'].date())
         result['data_points'] = []
         dataPoints = models.DataPoint.objects.filter(roast=qs['roast_id']).order_by('timestamp')
         if (len(dataPoints) > 0):

@@ -21,9 +21,11 @@ function getRoasts() {
         color = 'white';
         data.roasts.map(function(roast) {
             tr = $("<tr>");
+            tr.append(makeTD(roast.id, 'roast', roast.timestamp));
             tr.append(makeTD(roast.id, 'roast', roast.coffee_type));
             tr.append(makeTD(roast.id, 'roast', roast.roast_type));
             tr.append(makeTD(roast.id, 'roast', roast.weight + " lb"));
+            tr.append(makeTD(roast.id, 'roast', roast.quality));
             tr.append(makeTD(roast.id, 'roast', "\u21d0"));
             tr.append(makeTD(roast.id, 'compare', "\u21d2"));
             tr.append(makeTD(roast.id, 'delete', "\u274c"));
