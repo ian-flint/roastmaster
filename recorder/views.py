@@ -46,7 +46,7 @@ def roast_api(request):
             for dp in dataPoints:
                 dp.timestamp = int((dp.timestamp - start_time).total_seconds())
                 result['data_points'].append(model_to_dict(dp))
-        
+            result['data_points'].reverse() 
     else:
         result['status'] = 'error'
         result['message'] = 'roast_id not specified'

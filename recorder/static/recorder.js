@@ -1,5 +1,7 @@
 $(document).ready(function() {
     getRoasts();
+    $("#mask").click(hideLightbox);
+    $("#lightbox").click(hideLightbox);
 });
 
 function makeTD(id, cellclass, contents) {
@@ -29,6 +31,7 @@ function getRoasts() {
             tr.append(makeTD(roast.id, 'roast', "\u21d0"));
             tr.append(makeTD(roast.id, 'compare', "\u21d2"));
             tr.append(makeTD(roast.id, 'delete', "\u274c"));
+            tr.append(makeTD(roast.id, 'graph', "\u22f0"));
             t.append(tr);
             tr.css('background-color', color);
             if (color == 'white') {
@@ -41,7 +44,36 @@ function getRoasts() {
         $(".roast").click(clickRoast);
         $(".delete").click(clickDelete);
         $(".compare").click(clickCompare);
+        $(".graph").click(makeGraph);
         button.click(addRoast);
+    });
+}
+
+function hideLightbox() {
+    $("#mask").css("visibility", "hidden");
+    $("#lightbox").css("visibility", "hidden");
+    $("#lightbox").html("");
+}
+
+function makeGraph(e) {
+    var id = $(e.target).attr('id');
+    $("#mask").css("visibility", "visible");
+    $("#lightbox").css("visibility", "visible");
+    $.getJSON("/recorder/api/roast?roast_id=" + id, function(data) {
+        var bt = [];
+        var et = [];
+        data.data_points.map(function(dp) {
+            if (dp.bean_temp > 0) {
+                bt.push([dp.timestamp, dp.bean_temp]);
+            }
+            if (dp.element_temp > 0) {
+                et.push([dp.timestamp, dp.element_temp]);
+            }
+        });
+        $.plot("#lightbox", [
+                        {'label': 'Bean Temp', 'data': bt},
+                        {'label': 'Element Temp', 'data': et},
+        ]);
     });
 }
 
@@ -131,13 +163,9 @@ function saveDP (e) {
     var id = $("#roast").val();
     var field = $(e.target).attr('id');
     var value = $(e.target).val();
+    e.target.value = '';
     obj = {
             "roast": id,
-//            "bean_temp": $("#bean_temp").val(),
-//            "element_temp": $("#element_temp").val(),
-//            "heat_setting": $("#heat_setting").val(),
-//            "loft_setting": $("#loft_setting").val(),
-//            "event": $("#event").val()
     };
     obj[field] = value;
     $.post("/recorder/api/create_datapoint", obj, function() {

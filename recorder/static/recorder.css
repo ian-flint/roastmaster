@@ -11,7 +11,7 @@
     overflow-y: auto;
 }
 
-.roast, .delete, .compare {
+.graph, .roast, .delete, .compare {
     cursor: pointer;
     padding-right: 10px;
     padding-left: 10px;
@@ -30,4 +30,25 @@ th {
     background-color: #eeeeee;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+#mask {
+    opacity: .5;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    visibility: hidden;
+}
+
+#lightbox {
+    background-color: white;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    height: 80%;
+    width: 80%;
+    visibility: hidden;
 }
