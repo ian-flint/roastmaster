@@ -38,7 +38,8 @@ def roast_api(request):
         result['status'] = 'ok'
         result['message'] = ''
         result['roast_info'] = model_to_dict(models.Roast.objects.get(id=qs['roast_id']))
-        result['roast_info']['timestamp'] = str(result['roast_info']['timestamp'].date())
+        result['roast_info']['date'] = str(result['roast_info']['timestamp'].date())
+        result['roast_info']['timestamp'] = str(result['roast_info']['timestamp'].strftime("%s"))
         result['data_points'] = []
         dataPoints = models.DataPoint.objects.filter(roast=qs['roast_id']).order_by('timestamp')
         if (len(dataPoints) > 0):
