@@ -81,10 +81,13 @@ function drawGraph() {
 
 function addRoast() {
     $("#input").html("");
-    $("#input").append("Bean: <input type=text id=bean><br> ");
-    $("#input").append("Roast: <input type=text id=roast><br> ");
-    $("#input").append("Weight: <input type=text id=weight><br> ");
-    $("#input").append("<span class=button id=save_roast>Save</span><br>");
+    t = $("<table>");
+    t.append("<tr><td>Bean:</td><td><input type=text id=bean></td></tr>");
+    t.append("<tr><td>Roast:</td><td><input type=text id=roast></td></tr>");
+    t.append("<tr><td>Weight:</td><td><input type=text id=weight></td></tr>");
+    t.append("<tr><td></td><td><input type=submit id=save_roast value=Save></td></tr>");
+    $("#input").append(t);
+    $("#bean").focus();
     $("#save_roast").click(saveRoast);
 }
 
